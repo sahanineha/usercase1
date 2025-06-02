@@ -1,0 +1,22 @@
+# k8s/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice
+  namespace: microservices
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: microservice
+  template:
+    metadata:
+      labels:
+        app: microservice
+    spec:
+      containers:
+        - name: microservice
+          image: 448049822550.dkr.ecr.us-east-1.amazonaws.com/microservice-repo:v1
+          ports:
+            - containerPort: 3000
+
