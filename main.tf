@@ -85,7 +85,7 @@ resource "aws_iam_openid_connect_provider" "github" {
   ]
 
   thumbprint_list = [
-    "6938fd4d98bab03faadb97b34396831e3780aea1"
+    "6EA3857F2B0931B28CEBDD4E865F6130219F66AA"
   ] # GitHub's known root CA fingerprint
 }
 
@@ -294,8 +294,8 @@ data "aws_caller_identity" "current" {}
 
 ##################################################
 
-output "account_id" {
-  value = data.aws_caller_identity.current.account_id
+output "aws_caller_identity_details" {
+  value = data.aws_caller_identity.current
 }
 
 output "caller_arn" {
