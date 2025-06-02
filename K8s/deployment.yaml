@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: microservice
-          image: 448049822550.dkr.ecr.us-east-1.amazonaws.com/microservice-repo:v1
+          image: 448049822550.dkr.ecr.us-east-1.amazonaws.com/microservice-repo:latest
           ports:
             - containerPort: 3000
 
