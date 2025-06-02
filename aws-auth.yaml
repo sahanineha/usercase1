@@ -4,16 +4,9 @@ metadata:
   name: aws-auth
   namespace: kube-system
 data:
-  mapRoles: |
-    # EKS Managed Node Group IAM Role
-    - rolearn: arn:aws:iam::448049822550:role/eks-node-group-role
-      username: system:node:{{EC2PrivateDNSName}}
-      groups:
-        - system:bootstrappers
-        - system:nodes
-
+  mapRoles:
     # GitHub Actions OIDC IAM Role for CI/CD
     - rolearn: arn:aws:iam::448049822550:role/github-oidc-role
-      username: github-actions
+      username: github
       groups:
         - system:masters
