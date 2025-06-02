@@ -1,0 +1,53 @@
+name: Deploy to EKS
+
+on:
+  push:
+    branches: [main]  # Trigger on push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write       # Required for OIDC
+      contents: read        # Required to read repo contents
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | \
+          docker login --username AWS --password-stdin 448049822550.dkr.ecr.us-east-1.amazonaws.com
+      - name: Build and push Docker image
+        run: |
+          docker build -t microservice .
+          docker tag microservice:latest 448049822550.dkr.ecr.us-east-1.amazonaws.com/microservice-repo:latest
+          docker push 448049822550.dkr.ecr.us-east-1.amazonaws.com/microservice-repo:latest
+      - name: Verify identity
+        run: aws sts get-caller-identity
+
+      - name: Set up kubectl
+        run: |
+           aws eks update-kubeconfig --name eks-cluster --region us-east-1
+
+      - name: Show current context
+        run: kubectl config current-context
+
+      - name: Deploy to EKS
+        run: |
+          kubectl apply -f K8s/namespace.yaml
+          kubectl apply -f K8s/deployment.yaml
+          kubectl apply -f K8s/service.yaml
+          sleep 10
+
+      - name: reading file
+        run: kubectl get svc -n microservices
